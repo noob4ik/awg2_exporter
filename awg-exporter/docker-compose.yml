@@ -1,0 +1,21 @@
+services:
+  awg-exporter:
+    build: .
+    container_name: awg-exporter
+    restart: unless-stopped
+    environment:
+      - AWG_CONTAINER=amnezia-awg2
+      - AWG_BIN=awg
+      - LISTEN_ADDR=:9586
+    volumes:
+      # Docker socket — нужен для docker exec внутрь amnezia-awg2
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      # Привязываем только на конкретный IP или на все интерфейсы.
+      # Firewall (ufw/iptables) ограничит доступ до IP Prometheus-сервера.
+      - "9586:9586"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9586/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
