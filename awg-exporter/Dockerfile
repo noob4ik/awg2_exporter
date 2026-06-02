@@ -5,7 +5,7 @@ FROM golang:1.22-alpine AS builder
 
 WORKDIR /src
 
-COPY exporter/go.mod ./
+COPY exporter/go.mod exporter/go.sum ./
 RUN go mod download
 
 COPY exporter/ ./
